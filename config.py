@@ -23,12 +23,12 @@ class DevelopmentConfig(Config):
     DEBUG = True
     DEVELOPMENT = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(BASE_DIR, 'dev.sqlite3')
+        'sqlite:///' + os.path.join(BASE_DIR, 'tododevdb.sqlite3')
 
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(BASE_DIR, 'prod.sqlite3')
+        'sqlite:///' + os.path.join(BASE_DIR, 'todoproddb.sqlite3')
 
     @classmethod
     def init_app(cls, app):
