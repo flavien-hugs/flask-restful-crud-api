@@ -139,8 +139,6 @@ Pipfile.lock
 .flaskenv
 Pipfile.lock
 */migrations/*.py
-*.sqlite
-dev.sqlite
-prod.sqlite
+*.sqlite3
 alchemydumps-backup/
 alchemydumps-backup/*.gz
