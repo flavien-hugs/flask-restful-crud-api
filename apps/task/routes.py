@@ -2,25 +2,25 @@ from flask import Flask, request
 
 from .. import db, api
 from .models import Task
-from .serializers import task_fields
-from flask_restful import Resource, abort, marshal_with
+from .resources import resource_fields
+from flask_restful import Resource, reqparse, abort, marshal_with
 
 
 def abort_if_task_doesnt_exist(pk):
     if pk not in Task.query.all():
-        abort(404, message=f"Todo {pk} doesn't exist")
+        abort(404, message=f"Could not find task with that {pk}")
 
 
 class TaskList(Resource):
     """
-    shows a list of all tasks, and lets you POST to add new tasks
+    Shows a list of all tasks, and lets you POST to add new tasks
     """
-    @marshal_with(task_fields, envelope='resource')
+    @marshal_with(resource_fields, envelope='resource')
     def get(self):
         tasks = Task.query.order_by(Task.timestamp.desc()).all()
         return tasks, 201
 
-    @marshal_with(task_fields, envelope='resource')
+    @marshal_with(resource_fields, envelope='resource')
     def post(self):
         data = request.json
         task = Task(name=data['name'], description=data['description'])
@@ -32,15 +32,15 @@ class TaskList(Resource):
 
 class TaskSingle(Resource):
     """
-    shows a single todo item and lets you delete a todo item
+    Shows a single todo item and lets you delete a todo item
     """
-    @marshal_with(task_fields, envelope='resource')
+    @marshal_with(resource_fields, envelope='resource')
     def get(self, pk):
         abort_if_task_doesnt_exist(pk)
         task = Task.query.filter_by(id=pk).first()
         return task, 201
 
-    @marshal_with(task_fields, envelope='resource')
+    @marshal_with(resource_fields, envelope='resource')
     def put(self, pk):
         abort_if_task_doesnt_exist(pk)
         data = request.json
@@ -50,7 +50,7 @@ class TaskSingle(Resource):
         db.session.commit()
         return task, 201
 
-    @marshal_with(task_fields, envelope='resource')
+    @marshal_with(resource_fields, envelope='resource')
     def delete(self, pk):
         abort_if_task_doesnt_exist(pk)
         task = Task.query.filter_by(id=pk).first()
