@@ -6,12 +6,14 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
 
 from config import config
+from flask_restful import Api
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template
 
 
+api = Api()
 db = SQLAlchemy()
 
 
@@ -21,8 +23,12 @@ def create_app(config_name):
     config[config_name].init_app(app)
 
     db.init_app(app)
+    api.init_app(app)
 
     with app.app_context():
+
+        from .task import task as task_blueprint
+        app.register_blueprint(task_blueprint)
 
         if app.debug and not app.testing:
             if not os.path.exists('logs'):
