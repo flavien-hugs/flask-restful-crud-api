@@ -3,7 +3,7 @@ from flask import Flask, request
 from .. import db, api
 from .models import Task
 from .resources import resource_fields
-from flask_restful import Resource, reqparse, abort, marshal_with
+from flask_restful import Resource, abort, marshal_with
 
 
 def abort_if_task_doesnt_exist(pk):
