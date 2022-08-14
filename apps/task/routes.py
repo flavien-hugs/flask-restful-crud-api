@@ -6,6 +6,11 @@ from .serializers import task_fields
 from flask_restful import Resource, abort, marshal_with
 
 
+def abort_if_task_doesnt_exist(pk):
+    if pk not in Task.query.all():
+        abort(404, message=f"Todo {pk} doesn't exist")
+
+
 class TaskList(Resource):
     """
     shows a list of all tasks, and lets you POST to add new tasks
@@ -31,11 +36,13 @@ class TaskSingle(Resource):
     """
     @marshal_with(task_fields, envelope='resource')
     def get(self, pk):
+        abort_if_task_doesnt_exist(pk)
         task = Task.query.filter_by(id=pk).first()
         return task, 201
 
     @marshal_with(task_fields, envelope='resource')
     def put(self, pk):
+        abort_if_task_doesnt_exist(pk)
         data = request.json
         task = Task.query.filter_by(id=pk).first()
         task.name = data['name']
@@ -45,6 +52,7 @@ class TaskSingle(Resource):
 
     @marshal_with(task_fields, envelope='resource')
     def delete(self, pk):
+        abort_if_task_doesnt_exist(pk)
         task = Task.query.filter_by(id=pk).first()
         db.session.delete(task)
         db.session.commit()
