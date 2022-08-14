@@ -15,12 +15,12 @@ class TaskList(Resource):
     """
     Shows a list of all tasks, and lets you POST to add new tasks
     """
-    @marshal_with(resource_fields, envelope='resource')
+    @marshal_with(resource_fields)
     def get(self):
         tasks = Task.query.order_by(Task.timestamp.desc()).all()
         return tasks, 201
 
-    @marshal_with(resource_fields, envelope='resource')
+    @marshal_with(resource_fields)
     def post(self):
         data = request.json
         task = Task(name=data['name'], description=data['description'])
@@ -34,13 +34,13 @@ class TaskSingle(Resource):
     """
     Shows a single todo item and lets you delete a todo item
     """
-    @marshal_with(resource_fields, envelope='resource')
+    @marshal_with(resource_fields)
     def get(self, pk):
         abort_if_task_doesnt_exist(pk)
         task = Task.query.filter_by(id=pk).first()
         return task, 201
 
-    @marshal_with(resource_fields, envelope='resource')
+    @marshal_with(resource_fields)
     def put(self, pk):
         abort_if_task_doesnt_exist(pk)
         data = request.json
@@ -50,7 +50,7 @@ class TaskSingle(Resource):
         db.session.commit()
         return task, 201
 
-    @marshal_with(resource_fields, envelope='resource')
+    @marshal_with(resource_fields)
     def delete(self, pk):
         abort_if_task_doesnt_exist(pk)
         task = Task.query.filter_by(id=pk).first()
@@ -61,4 +61,4 @@ class TaskSingle(Resource):
 
 
 api.add_resource(TaskList, '/')
-api.add_resource(TaskSingle, '/<int:pk>/')
+api.add_resource(TaskSingle, '/task/<int:pk>/')
